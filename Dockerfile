@@ -8,6 +8,7 @@ SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 ARG DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && \
 	apt-get install --no-install-recommends -y \
+	git npm  shfmt shellcheck  sudo \
 	curl ffmpeg php time w3m && \
 	curl -sS https://getcomposer.org/installer -o composer-setup.php && \
 	php composer-setup.php --install-dir=/usr/local/bin --filename=composer && \
