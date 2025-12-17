@@ -1,9 +1,9 @@
-# Usage: podman build --tag decentim-freshrss:2024.11.15 .
+# Usage: podman build --tag decentim-freshrss:2025.12.17 .
 
-FROM docker.io/freshrss/freshrss:1.24.3
+# also :edge is worth trying
+FROM docker.io/freshrss/freshrss:1.27.1
 
 ENV TZ UTC
-SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
 ARG DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && \
