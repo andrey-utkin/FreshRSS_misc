@@ -40,7 +40,14 @@ RUN mkdir -p /usr/share/piper \
 # Support the way Extension-TTS as of before 2025-12-17 refers to model path
 RUN ln -sv /usr/share/piper-voices /piper-voices
 
-RUN cd /usr/local/src && git clone https://github.com/decent-im/FreshRSS --branch latest
+# for prod:
+# checks out default branch
+RUN cd /usr/local/src && git clone https://github.com/decent-im/FreshRSS
+# for dev:
+# checks out current branch
+#RUN --mount=type=bind,src=./FreshRSS,dst=/host/FreshRSS,ro  cd /usr/local/src && git clone /host/FreshRSS
+# for dev - END
+
 # any useful exclusions?
 RUN rsync -av /usr/local/src/FreshRSS/ /var/www/FreshRSS
 RUN cd /var/www/FreshRSS && composer install
