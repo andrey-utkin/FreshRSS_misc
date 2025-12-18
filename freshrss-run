@@ -1,0 +1,30 @@
+#!/bin/bash
+set -euo pipefail
+
+CONTAINER_IMAGE=decentim-freshrss:2025.12.17
+
+# Do 'composer install' if this fails
+[[ -d /var/www/news.decent.im/FreshRSS/vendor ]]
+
+# it expects this container to run for "readable" extension:
+podman network inspect net-freshrss-ext-readable || podman network create net-freshrss-ext-readable
+if [[ "$(podman inspect merc | jq '.[0].State.Running')" != true ]]; then
+	podman run --detach --replace --network=net-freshrss-ext-readable --hostname merc --name merc docker.io/wangqiru/mercury-parser-api
+fi
+
+podman run \
+--detach \
+--replace \
+--restart unless-stopped \
+--log-opt max-size=10m \
+-p 8080:80 \
+--expose 8080 \
+-e CRON_MIN=11,41 \
+-v /var/www/news.decent.im/var_www_FreshRSS_data:/var/www/FreshRSS/data:z \
+--name freshrss \
+"$CONTAINER_IMAGE"
+podman network connect net-freshrss-ext-readable freshrss
+podman exec freshrss which ffmpeg
+podman exec freshrss composer install
+
+docker exec freshrss curl --fail --no-progress-meter -o /dev/null http://merc:3000
