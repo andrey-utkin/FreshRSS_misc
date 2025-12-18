@@ -7,6 +7,8 @@ services:
       - /var/www/news.decent.im/var_www_FreshRSS_data:/var/www/FreshRSS/data:z
     ports:
       - 8080:80
+    environment:
+      - CRON_MIN=11,41
     depends_on:
       - merc
     networks:
