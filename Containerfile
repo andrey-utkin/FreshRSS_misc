@@ -1,7 +1,12 @@
-# Usage: podman build --tag decentim-freshrss:2025.12.17 .
+# Usage:
+# podman build --tag decentim-freshrss:2026.04.21 .
+# podman image save decentim-freshrss:2026.04.21 | zstd -T0 --ultra -20 > decentim-freshrss__2026.04.21.tar.zst
+# ln -svnf decentim-freshrss__2026.04.21.tar.zst container-image-latest.tar.zst
+# On deployment:
+# zstdcat container-image-latest.tar.zst | podman image load
 
 #FROM docker.io/freshrss/freshrss:edge
-FROM docker.io/freshrss/freshrss:1.27.1
+FROM docker.io/freshrss/freshrss:1.28.1
 
 ENV TZ UTC
 
@@ -17,6 +22,7 @@ RUN apt-get update \
         rsync \
         shellcheck \
         shfmt \
+        sqlite3 \
         sudo \
         time \
         w3m \
@@ -42,7 +48,7 @@ RUN ln -sv /usr/share/piper-voices /piper-voices
 
 # for prod:
 # checks out default branch
-RUN cd /usr/local/src && git clone https://github.com/decent-im/FreshRSS
+RUN cd /usr/local/src && git clone https://github.com/decent-im/FreshRSS --branch updates-2026-04-21
 # for dev:
 # checks out current branch
 #RUN --mount=type=bind,src=./FreshRSS,dst=/host/FreshRSS,ro  cd /usr/local/src && git clone /host/FreshRSS

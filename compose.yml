@@ -2,7 +2,7 @@ name: news.decent.im
 services:
   freshrss:
     container_name: freshrss
-    image: localhost/decentim-freshrss:2025.12.17
+    image: localhost/decentim-freshrss:2026.04.21
     volumes:
       - /var/www/news.decent.im/var_www_FreshRSS_data:/var/www/FreshRSS/data:z
     ports:
@@ -12,19 +12,20 @@ services:
     depends_on:
       - merc
     networks:
-      net-freshrss-ext-readable:
-        ipv4_address: 10.89.1.3
+      freshrss:
+        ipv4_address: 10.100.0.2
 
   merc:
     container_name: merc
     image: docker.io/wangqiru/mercury-parser-api
     networks:
-      net-freshrss-ext-readable:
-        ipv4_address: 10.89.1.2
+      freshrss:
+        ipv4_address: 10.100.0.3
 
 networks:
-  net-freshrss-ext-readable:
+  freshrss:
+    name: freshrss
     driver: bridge
     ipam:
       config:
-        - subnet: 10.89.1.0/24
+        - subnet: 10.100.0.0/24
