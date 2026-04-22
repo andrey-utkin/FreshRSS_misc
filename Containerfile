@@ -1,7 +1,7 @@
 # Usage:
-# podman build --tag decentim-freshrss:2026.04.21 .
-# podman image save decentim-freshrss:2026.04.21 | zstd -T0 --ultra -20 > decentim-freshrss__2026.04.21.tar.zst
-# ln -svnf decentim-freshrss__2026.04.21.tar.zst container-image-latest.tar.zst
+# podman build --tag decentim-freshrss:2026.04.21.r1 .
+# podman image save decentim-freshrss:2026.04.21.r1 | zstd -T0 --ultra -20 > decentim-freshrss__2026.04.21.r1.tar.zst
+# ln -svnf decentim-freshrss__2026.04.21.r1.tar.zst container-image-latest.tar.zst
 # On deployment:
 # zstdcat container-image-latest.tar.zst | podman image load
 
