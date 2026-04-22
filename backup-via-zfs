@@ -1,0 +1,19 @@
+#!/bin/bash
+set -euo pipefail
+set -x
+
+[[ -v SSH_AUTH_SOCK ]]
+SSH_OPTS=(-o Compression=no)
+BACKUP_SERVER_SSH_URI=root@supermicro-10gbe
+ssh "${SSH_OPTS[@]}" "$BACKUP_SERVER_SSH_URI" true
+
+#OLD_SNAPSHOTS=$(zfs list -t snapshot --json zpool-mirror/news.decent.im  | jq --raw-output '.datasets[].snapshot_name' | sort)
+PREV_SNAPSHOT=$(zfs list -t snapshot --json zpool-mirror/news.decent.im  | jq --raw-output '.datasets[].snapshot_name' | sort | tail -n1)
+#SNAPSHOT_NAME=2026-04-22_09-35
+SNAPSHOT_NAME=$(date --utc '+%F_%H-%M')
+zfs snapshot zpool-mirror/news.decent.im@"$SNAPSHOT_NAME"
+
+#time zfs send -i @"$PREV_SNAPSHOT" zpool-mirror/news.decent.im@$SNAPSHOT_NAME | ssh -o Compression=no root@supermicro-10gbe zfs receive zroot/infra-backup/services/news.decent.im
+ACTIVE_SERVER_ZPOOL_AND_DATASET=zpool-mirror/news.decent.im
+BACKUP_SERVER_ZPOOL_AND_DATASET=zroot/infra-backup/services/news.decent.im
+time zfs send -i @"$PREV_SNAPSHOT" "$ACTIVE_SERVER_ZPOOL_AND_DATASET"@"$SNAPSHOT_NAME" | ssh "${SSH_OPTS[@]}" "$BACKUP_SERVER_SSH_URI" zfs receive "$BACKUP_SERVER_ZPOOL_AND_DATASET"
