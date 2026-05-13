@@ -1,9 +1,5 @@
 # Usage:
-# podman build --tag decentim-freshrss:2026.04.21.r1 .
-# podman image save decentim-freshrss:2026.04.21.r1 | zstd -T0 --ultra -20 > decentim-freshrss__2026.04.21.r1.tar.zst
-# ln -svnf decentim-freshrss__2026.04.21.r1.tar.zst container-image-latest.tar.zst
-# On deployment:
-# zstdcat container-image-latest.tar.zst | podman image load
+# make image && make deploy-image
 
 #FROM docker.io/freshrss/freshrss:edge
 FROM docker.io/freshrss/freshrss:1.28.1
@@ -59,7 +55,7 @@ RUN rsync -av /usr/local/src/FreshRSS/ /var/www/FreshRSS
 RUN cd /var/www/FreshRSS && composer install
 
 RUN cd /usr/local/src && git clone https://github.com/decent-im/xExtension-Readable
-RUN rsync -av /usr/local/src/xExtension-Readable/* /var/www/FreshRSS/extensions
+RUN rsync -av /usr/local/src/xExtension-Readable /var/www/FreshRSS/extensions
 
 RUN cd /usr/local/src && git clone https://github.com/decent-im/FreshRSS_Extensions FreshRSS_Extensions_decentim
 RUN rsync -av /usr/local/src/FreshRSS_Extensions_decentim/xExtension-TTS /var/www/FreshRSS/extensions

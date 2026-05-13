@@ -2,7 +2,7 @@ name: news.decent.im
 services:
   freshrss:
     container_name: freshrss
-    image: localhost/decentim-freshrss:2026.04.21.r1
+    image: localhost/decentim-freshrss:2026.04.22
     volumes:
       - /var/www/news.decent.im/var_www_FreshRSS_data:/var/www/FreshRSS/data:z
     ports:
