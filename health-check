@@ -1,0 +1,5 @@
+#!/bin/bash
+set -euo pipefail
+set -x
+
+podman exec freshrss curl --fail --no-progress-meter http://merc:3000/parser | grep -q -F '{"message":"No URL was provided"}'

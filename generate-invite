@@ -1,0 +1,32 @@
+#!/bin/bash
+set -euo pipefail
+
+if [[ -v 1 ]] && [[ "$1" == "--test" ]]; then
+	TICKET=invite.NONREAL
+else
+	: ${BATCHNAME:=invite}
+	FILEPATH=$(podman exec freshrss  mktemp --tmpdir=/var/www/FreshRSS/data/tickets $BATCHNAME.XXXXXXXX)
+	podman exec freshrss  chown www-data "$FILEPATH"
+	echo "All tickets:"
+	podman exec freshrss  ls /var/www/FreshRSS/data/tickets
+	TICKET=$(basename "$FILEPATH")
+fi
+
+URL="https://news.decent.im/i/?c=auth&a=register&ticket=$TICKET"
+echo "$URL" > "$TICKET".url
+qrencode --level H --dpi 300 --size 4 --foreground 0056B9  --background FFD800   -o "$TICKET".png "$URL"
+
+cat > "$TICKET".html <<EOF
+<td>
+<center>
+</center>
+<strong style="padding-bottom:10px">FreshRSS newsreader</strong><br>
+${URL//&/<br>&}<br>
+<br>
+<img src="$TICKET.png">
+<br>
+Enjoy! Get in touch:<br>
+customer-support@autkin.net
+<br>
+</td>
+EOF

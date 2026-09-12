@@ -1,0 +1,3 @@
+#!/bin/bash
+# https://unix.stackexchange.com/a/420622/601324
+exec podman exec freshrss bash -c 'awk 1 /tmp/tts_job.*/who | sort | uniq -c | sort -n'
