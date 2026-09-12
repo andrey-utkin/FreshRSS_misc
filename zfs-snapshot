@@ -1,0 +1,11 @@
+#!/bin/bash
+set -euo pipefail
+set -x
+
+SERVICE_DIR=/var/www/news.decent.im
+SERVICE_DATASET=$(df --output=source "$SERVICE_DIR" | tail -n1)
+[[ "$(df --output=target . | tail -n1)" == "$SERVICE_DIR" ]]
+
+TIMESTAMP=$(date --utc +%F_%H%M%Sz)
+SNAPSHOT_NAME=$TIMESTAMP
+zfs snapshot "$SERVICE_DATASET"@"$SNAPSHOT_NAME"
