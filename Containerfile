@@ -2,7 +2,7 @@
 # make image && make deploy-image
 
 #FROM docker.io/freshrss/freshrss:edge
-FROM docker.io/freshrss/freshrss:1.28.1
+FROM docker.io/freshrss/freshrss:1.30.0
 
 ENV TZ UTC
 
@@ -30,10 +30,12 @@ RUN curl -sS https://getcomposer.org/installer -o composer-setup.php && \
 
 RUN pip3 install --break-system-packages piper-tts
 
-# Download the voice used.
-# Placement follows the example of ArchLinux AUR piper-voices-common package.
-RUN mkdir -p /usr/share/piper-voices/en/en_US/lessac/high/ \
-    && python3 -m piper.download_voices en_US-lessac-high --data-dir /usr/share/piper-voices/en/en_US/lessac/high/
+## Download the voice used. (Very slow)
+## Placement follows the example of ArchLinux AUR piper-voices-common package.
+#RUN mkdir -p /usr/share/piper-voices/en/en_US/lessac/high/ \
+#    && python3 -m piper.download_voices en_US-lessac-high --data-dir /usr/share/piper-voices/en/en_US/lessac/high/
+## Replacement command:
+COPY piper-voices /usr/share/piper-voices
 
 # Support the way Extension-TTS as of before 2025-12-17 invokes piper
 RUN mkdir -p /usr/share/piper \
@@ -44,7 +46,7 @@ RUN ln -sv /usr/share/piper-voices /piper-voices
 
 # for prod:
 # checks out default branch
-RUN cd /usr/local/src && git clone https://github.com/decent-im/FreshRSS --branch updates-2026-04-21
+RUN cd /usr/local/src && git clone https://github.com/decent-im/FreshRSS --branch updates-2026-09-11
 # for dev:
 # checks out current branch
 #RUN --mount=type=bind,src=./FreshRSS,dst=/host/FreshRSS,ro  cd /usr/local/src && git clone /host/FreshRSS
@@ -63,4 +65,3 @@ RUN rsync -av /usr/local/src/FreshRSS_Extensions_decentim/xExtension-TTS /var/ww
 RUN cd /usr/local/src && git clone https://github.com/FreshRSS/Extensions FreshRSS_Extensions_upstream
 RUN rsync -av /usr/local/src/FreshRSS_Extensions_upstream/xExtension-ReadingTime /var/www/FreshRSS/extensions
 RUN rsync -av /usr/local/src/FreshRSS_Extensions_upstream/xExtension-YouTube     /var/www/FreshRSS/extensions
-# Wallabag extension dropped as not used by any current customer
