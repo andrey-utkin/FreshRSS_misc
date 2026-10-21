@@ -1,8 +1,7 @@
 # Usage:
 # make image && make deploy-image
 
-#FROM docker.io/freshrss/freshrss:edge
-FROM docker.io/freshrss/freshrss:1.30.0
+FROM docker.io/freshrss/freshrss:edge
 
 ENV TZ UTC
 
@@ -46,7 +45,7 @@ RUN ln -sv /usr/share/piper-voices /piper-voices
 
 # for prod:
 # checks out default branch
-RUN cd /usr/local/src && git clone https://github.com/decent-im/FreshRSS --branch updates-2026-09-11
+RUN cd /usr/local/src && git clone https://github.com/decent-im/FreshRSS --branch main
 # for dev:
 # checks out current branch
 #RUN --mount=type=bind,src=./FreshRSS,dst=/host/FreshRSS,ro  cd /usr/local/src && git clone /host/FreshRSS

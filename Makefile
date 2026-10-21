@@ -8,12 +8,14 @@ SERVER_SSH_URI ?= root@z620
 image:
 	#${ENGINE} build --no-cache --tag ${IMAGE_NAME}:${IMAGE_TAG} .
 	${ENGINE} build --tag ${IMAGE_NAME}:${IMAGE_TAG} .
+
+image-save:
 	${ENGINE} image save ${IMAGE_NAME}:${IMAGE_TAG} | zstd -T0 --ultra -20 > ${IMAGE_NAME}__${IMAGE_TAG}.tar.zst
 	ln -svnf ${IMAGE_NAME}__${IMAGE_TAG}.tar.zst container-image-latest.tar.zst
 
 .PHONY: upstream-container-shell
 upstream-container-shell:
-	${ENGINE} run --rm -it -v ${PWD}/../FreshRSS:/usr/local/src/FreshRSS docker.io/freshrss/freshrss:1.30.0 bash -l
+	${ENGINE} run --rm -it -v ${PWD}/../FreshRSS:/usr/local/src/FreshRSS docker.io/freshrss/freshrss:edge bash -l
 
 stop-snapshot-start:
 	${COMPOSE} down
@@ -26,6 +28,8 @@ run-compose:
 
 .PHONY: deploy-image
 deploy-image:
+	${MAKE} image
+	${MAKE} image-save
 	rsync -av --info=progress2 \
 		${IMAGE_NAME}__${IMAGE_TAG}.tar.zst \
 		container-image-latest.tar.zst \
