@@ -3,9 +3,11 @@ set -euo pipefail
 set -x
 
 SERVICE_DIR=/var/www/news.decent.im
+# make sure the service is on its own dataset and we're not handling whole rootfs
+[[ "$(df --output=target "$SERVICE_DIR" | tail -n1)" == "$SERVICE_DIR" ]]
 SERVICE_DATASET=$(df --output=source "$SERVICE_DIR" | tail -n1)
-[[ "$(df --output=target . | tail -n1)" == "$SERVICE_DIR" ]]
 
 TIMESTAMP=$(date --utc +%F_%H%M%Sz)
 SNAPSHOT_NAME=$TIMESTAMP
 zfs snapshot "$SERVICE_DATASET"@"$SNAPSHOT_NAME"
+echo "$SNAPSHOT_NAME"

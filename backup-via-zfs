@@ -2,12 +2,16 @@
 set -euo pipefail
 set -x
 
+# obsolete! don't use, look at zfs-backup
+false
+
 [[ -v SSH_AUTH_SOCK ]]
 SSH_OPTS=(-o Compression=no)
 BACKUP_SERVER_SSH_URI=root@supermicro-10gbe
 ssh "${SSH_OPTS[@]}" "$BACKUP_SERVER_SSH_URI" true
 
 #OLD_SNAPSHOTS=$(zfs list -t snapshot --json zpool-mirror/news.decent.im  | jq --raw-output '.datasets[].snapshot_name' | sort)
+# actually we want the newest snapshot *common between active server and backup server*
 PREV_SNAPSHOT=$(zfs list -t snapshot --json zpool-mirror/news.decent.im  | jq --raw-output '.datasets[].snapshot_name' | sort | tail -n1)
 #SNAPSHOT_NAME=2026-04-22_09-35
 SNAPSHOT_NAME=$(date --utc '+%F_%H-%M')
